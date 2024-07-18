@@ -32,11 +32,6 @@ func script_visibility_changed(a = null):
 		return
 	var parent: TabContainer = control.get_parent()
 	parent.current_tab = control.get_index()
-	 
-func on_script_changed(scr: Script):
-	if !script_editor.visible:
-		return
-	 
 
 func _exit_tree():
 	panel.reparent(default_parent)
