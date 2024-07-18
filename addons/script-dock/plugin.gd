@@ -7,7 +7,10 @@ var default_parent: Control
 var script_editor :ScriptEditor = null
 var last_screen:=''
 
+ 
+
 func _enter_tree()->void:
+	#print(" current screen " ,get_main_screen())
 	script_editor = EditorInterface.get_script_editor()
 	script_editor.editor_script_changed.connect(script_visibility_changed)
 	script_editor.visibility_changed.connect(script_visibility_changed)
@@ -20,9 +23,12 @@ func _enter_tree()->void:
 	control.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	control.name = "Scripts"
 	add_control_to_dock(EditorPlugin.DOCK_SLOT_LEFT_BR, control)
+	 
 	## connect to what screen is active 
 	main_screen_changed.connect(screen_changed)
-	
+	 
+		
+
 func screen_changed(screen)->void:
 	last_screen = screen
 	if !script_editor && !script_editor.is_visible_in_tree():
@@ -41,7 +47,7 @@ func script_visibility_changed(a = null)->void:
 		return
 	
 	if last_screen=="":
-		last_screen="Script"
+		return
 		
 	if last_screen=="Script":
 		var parent: TabContainer = control.get_parent()
