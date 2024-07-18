@@ -9,7 +9,7 @@ var default_parent: Control
 var script_editor :ScriptEditor = null
 func _enter_tree():
 	script_editor = EditorInterface.get_script_editor()
-	script_editor.editor_script_changed.connect(on_script_changed)
+	script_editor.editor_script_changed.connect(script_visibility_changed)
 	script_editor.visibility_changed.connect(script_visibility_changed)
 	 
 	default_parent = script_editor.get_child(0).get_child(1)
