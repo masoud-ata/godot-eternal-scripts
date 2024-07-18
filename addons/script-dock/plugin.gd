@@ -27,7 +27,9 @@ func _enter_tree():
 	
 	
  
-func script_visibility_changed():
+func script_visibility_changed(a = null):
+	if !script_editor.is_visible_in_tree():
+		return
 	var parent: TabContainer = control.get_parent()
 	parent.current_tab = control.get_index()
 	 
