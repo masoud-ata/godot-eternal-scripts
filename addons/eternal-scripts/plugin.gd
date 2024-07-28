@@ -12,7 +12,7 @@ var new_scripts_dock := MarginContainer.new()
 
 func _enter_tree():
 	print("Eternal-scripts is on baby!")
-	script_editor = EditorInterface.get_script_editor()
+	script_editor = get_editor_interface().get_script_editor()
 	script_editor.editor_script_changed.connect(_on_editor_script_changed)
 	script_editor.visibility_changed.connect(_on_editor_script_changed)
 
@@ -43,7 +43,7 @@ func _add_scripts_panel_to_new_scripts_dock() -> void:
 
 
 func _on_editor_script_changed(_a = null):
-	EditorInterface.set_main_screen_editor("Script")
+	get_editor_interface().set_main_screen_editor("Script")
 	if !script_editor.is_visible_in_tree():
 		return
 	new_parent.current_tab = new_scripts_dock.get_index()
@@ -53,4 +53,4 @@ func _revert_to_original() -> void:
 	scripts_panel.reparent(original_parent)
 	original_parent.move_child(scripts_panel, 0)
 	remove_control_from_docks(new_scripts_dock)
-    new_scripts_dock.queue_free()
+	new_scripts_dock.queue_free()
