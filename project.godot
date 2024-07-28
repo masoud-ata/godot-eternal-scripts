@@ -10,8 +10,9 @@ config_version=5
 
 [application]
 
-config/name="script-dock"
-config/features=PackedStringArray("4.2", "GL Compatibility")
+config/name="Eternal Scripts"
+config/tags=PackedStringArray("addon")
+config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [dotnet]
@@ -20,7 +21,7 @@ project/assembly_name="script-dock"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/script-dock/plugin.cfg")
+enabled=PackedStringArray()
 
 [rendering]
 
