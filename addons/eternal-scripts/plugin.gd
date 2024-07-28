@@ -53,3 +53,4 @@ func _revert_to_original() -> void:
 	scripts_panel.reparent(original_parent)
 	original_parent.move_child(scripts_panel, 0)
 	remove_control_from_docks(new_scripts_dock)
+    new_scripts_dock.queue_free()
