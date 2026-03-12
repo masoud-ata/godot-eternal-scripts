@@ -2,71 +2,49 @@
 extends EditorPlugin
 
 
-var original_parent: Control
-var scripts_panel: Control
 var script_editor: ScriptEditor = null
+var scripts_list_original_parent: Control
+var scripts_list_panel: Control
 
-var new_parent: Control
-var new_scripts_dock := MarginContainer.new()
-
-
-var docked := false
+var new_scripts_dock: EditorDock
 
 
 func _enter_tree():
-	print("Eternal-scripts is on baby!")
-	script_editor = get_editor_interface().get_script_editor()
-	script_editor.editor_script_changed.connect(_on_editor_script_changed)
-	script_editor.visibility_changed.connect(_on_editor_script_changed)
+	script_editor = EditorInterface.get_script_editor()
 
-	original_parent = script_editor.get_child(0).get_child(1)
-	scripts_panel = original_parent.get_child(0)
+	scripts_list_original_parent = script_editor.get_child(0).get_child(1)
+	scripts_list_panel = scripts_list_original_parent.get_child(0)
 
-	_add_scripts_panel_to_new_scripts_dock()
-	docked = true
+	_add_scripts_list_panel_to_new_scripts_dock()
 
 
 func _exit_tree():
-	print("Eternal-scripts is off.")
-
-	script_editor.editor_script_changed.disconnect(_on_editor_script_changed)
-	script_editor.visibility_changed.disconnect(_on_editor_script_changed)
-
-	_revert_to_original()
+	_revert_to_original_layout()
+	remove_dock(new_scripts_dock)
 	new_scripts_dock.queue_free()
-	docked = false
 
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventKey and event.is_pressed() and not event.is_echo():
-		var key_event = event as InputEventKey
-		if key_event.shift_pressed and key_event.ctrl_pressed and key_event.keycode == KEY_F11:
-			if docked:
-				_revert_to_original()
-			else:
-				_add_scripts_panel_to_new_scripts_dock()
-			docked = not docked
+	var left_mouse_clicked = event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed()
+
+	if left_mouse_clicked:
+		var mouse_pos = script_editor.get_viewport().get_mouse_position()
+		if scripts_list_panel.get_global_rect().has_point(mouse_pos):
+			_on_editor_script_changed()
 
 
-func _add_scripts_panel_to_new_scripts_dock() -> void:
-	scripts_panel.reparent(new_scripts_dock)
-
-	new_scripts_dock.name = "Scripts"
-	new_scripts_dock.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	new_scripts_dock.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	add_control_to_dock(EditorPlugin.DOCK_SLOT_LEFT_UR, new_scripts_dock)
-
-	new_parent = new_scripts_dock.get_parent()
+func _add_scripts_list_panel_to_new_scripts_dock() -> void:
+	new_scripts_dock = EditorDock.new()
+	new_scripts_dock.title = "Scripts"
+	new_scripts_dock.default_slot = EditorDock.DOCK_SLOT_LEFT_UL
+	scripts_list_panel.reparent(new_scripts_dock)
+	add_dock(new_scripts_dock)
 
 
-func _revert_to_original() -> void:
-	scripts_panel.reparent(original_parent)
-	original_parent.move_child(scripts_panel, 0)
-	remove_control_from_docks(new_scripts_dock)
+func _revert_to_original_layout() -> void:
+	scripts_list_panel.reparent(scripts_list_original_parent)
+	scripts_list_original_parent.move_child(scripts_list_panel, 0)
 
 
 func _on_editor_script_changed(_a = null):
-	get_editor_interface().set_main_screen_editor("Script")
-	if !script_editor.is_visible_in_tree():
-		return
-	new_parent.current_tab = new_scripts_dock.get_index()
+	EditorInterface.set_main_screen_editor("Script")
